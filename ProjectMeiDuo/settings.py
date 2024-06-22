@@ -24,7 +24,7 @@ SECRET_KEY = 'django-insecure-k^^^n(1nnv+lewe^=kc!0*ys)zqj7duzne$ymqs@$$15s*j-vg
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['127.0.0.1', 'www.meiduo.site', 'localhost']
 
 # Application definition
 
@@ -36,7 +36,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'apps.logins',
-    'apps.users'
+    'apps.users',
+    'corsheaders'
 ]
 
 MIDDLEWARE = [
@@ -47,7 +48,18 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
 ]
+
+# 跨域白名单
+
+CORS_ORIGIN_WHITELIST = (
+    'http://127.0.0.1:8080',
+    'http://localhost:8080',
+    'http://www.meiduo.site:8080',
+    'http://www.meiduo.site:8000'
+)
+CORS_ALLOW_CREDENTIALS = True
 
 ROOT_URLCONF = 'ProjectMeiDuo.urls'
 
