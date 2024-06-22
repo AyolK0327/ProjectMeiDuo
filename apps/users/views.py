@@ -1,3 +1,4 @@
+from django.contrib.auth import login
 from django.shortcuts import render
 from django.views.decorators.csrf import csrf_exempt
 from django.http import JsonResponse
@@ -63,10 +64,11 @@ class RegisterView(View):
         # 写入数据库
 
         try:
-            User.objects.create_user(username=username,
-                                     password=password,
-                                     mobile=mobile)
+            user = User.objects.create_user(username=username,
+                                            password=password,
+                                            mobile=mobile)
         except Exception as e:
             return http.JsonResponse({'code': 400, 'errmsg': '注册失败!'})
 
+        login(request, user)
         return http.JsonResponse({'code': 0, 'errmsg': '注册成功!'})
