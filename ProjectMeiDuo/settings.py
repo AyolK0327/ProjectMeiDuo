@@ -44,16 +44,20 @@ MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
-    'django.middleware.csrf.CsrfViewMiddleware',
+    #'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'corsheaders.middleware.CorsMiddleware',
 ]
 
 # 跨域白名单
+CSRF_TRUSTED_ORIGINS = ['http://www.meiduo.site:8080',
+                        'http://localhost:8080',
+                        'http://127.0.0.1:8080'
+                        ]
 
 CORS_ORIGIN_WHITELIST = (
+    'http://localhost:8080',
     'http://127.0.0.1:8080',
     'http://localhost:8080',
     'http://www.meiduo.site:8080',
@@ -85,12 +89,26 @@ WSGI_APPLICATION = 'ProjectMeiDuo.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.1/ref/settings/#databases
 
+
+#
+
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'meiduo',  # 数据库名
+        'USER': 'weiyanyu',  # 数据库用户
+        'PASSWORD': '21300324',  # 数据库密码
+        'HOST': 'localhost',  # 数据库地址
+        'PORT': '3306',  # 数据库端口
     }
 }
+
+# DATABASES = {
+#    'default': {
+#        'ENGINE': 'django.db.backends.sqlite3',
+#        'NAME': BASE_DIR / 'db.sqlite3',
+#    }
+# }
 
 # Password validation
 # https://docs.djangoproject.com/en/4.1/ref/settings/#auth-password-validators
