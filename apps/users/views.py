@@ -143,3 +143,4 @@ class RegisterView(View):
 
         response.set_cookie('username', user.username, max_age=3600 * 24 * 15)
         return response
+
