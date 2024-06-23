@@ -29,6 +29,7 @@ class MobileCountView(View):
 class RegisterView(View):
 
     def post(self, request):
+        print("?")
         # 获取数据
         json_bytes = request.body  # 从请求体中获取原始的JSON数据，bytes类型的
         json_str = json_bytes.decode()  # 将bytes类型的JSON数据，转成JSON字符串
