@@ -55,7 +55,6 @@ var vm = new Vue({
             // 检查重名
             if (this.error_name == false) {
                 var url = this.host + '/usernames/' + this.username + '/count/';
-                // vue 如何发送 ajax 请求呢？axios 
                 axios.get(url, {
                     responseType: 'json',
                     withCredentials:true,
@@ -164,11 +163,6 @@ var vm = new Vue({
                 withCredentials:true,
             })
                 .then(response => {
-                    if(response.data.code==400){
-                        this.error_sms_code = true;
-                        this.error_sms_code_message = response.data.errmsg;
-                        return;
-                    }
                     // 表示后端发送短信成功
                     // 倒计时60秒，60秒后允许用户再次点击发送短信验证码的按钮
                     var num = 60;
