@@ -1,3 +1,4 @@
+from django.contrib.auth import authenticate, login
 from django.shortcuts import render
 from django.views.decorators.csrf import csrf_exempt
 from django.http import JsonResponse
@@ -8,6 +9,56 @@ import json
 import re
 
 from apps.users.models import User
+
+
+class LoginView(View):
+    def get(self, request):
+
+        return render(request, 'login.html')
+
+    def post(self, request):
+        # 1.接收参数
+        dict = json.loads(request.body.decode())
+        username = dict.get('username')
+        password = dict.get('password')
+        remembered = dict.get('remembered')
+
+        if re.match('^1[3-9]\d{9}$', username):
+            # 手机号
+            User.USERNAME_FIELD = 'mobile'
+        else:
+            # account 是用户名
+            # 根据用户名从数据库获取 user 对象返回.
+            User.USERNAME_FIELD = 'username'
+
+        # 2.校验(整体 + 单个)
+        if not all([username, password]):
+            return JsonResponse({'code': 400,
+                                 'errmsg': '缺少必传参数'})
+
+        # 3.验证是否能够登录
+        user = authenticate(username=username,
+                            password=password)
+
+        # 判断是否为空,如果为空,返回
+        if user is None:
+            return JsonResponse({'code': 400,
+                                 'errmsg': '用户名或者密码错误'})
+
+        # 4.状态保持
+        login(request, user)
+
+        # 5.判断是否记住用户
+        if not remembered:
+            # 7.如果没有记住: 关闭立刻失效
+            request.session.set_expiry(0)
+        else:
+            # 6.如果记住:  设置为两周有效
+            request.session.set_expiry(None)
+
+        # 8.返回json
+        return JsonResponse({'code': 0,
+                             'errmsg': 'ok'})
 
 
 # 用户名重复
@@ -64,10 +115,12 @@ class RegisterView(View):
         # 写入数据库
 
         try:
-            User.objects.create_user(username=username,
-                                     password=password,
-                                     mobile=mobile)
+            user = User.objects.create_user(username=username,
+                                            password=password,
+                                            mobile=mobile)
         except Exception as e:
             return http.JsonResponse({'code': 400, 'errmsg': '注册失败!'})
+
+        login(request, user)
 
         return http.JsonResponse({'code': 0, 'errmsg': '注册成功!'})
