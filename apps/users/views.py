@@ -1,4 +1,4 @@
-from django.contrib.auth import authenticate, login
+from django.contrib.auth import authenticate, login, logout
 from django.shortcuts import render
 from django.views.decorators.csrf import csrf_exempt
 from django.http import JsonResponse
@@ -9,6 +9,22 @@ import json
 import re
 
 from apps.users.models import User
+
+
+class LogoutView(View):
+    """退出登录"""
+
+    def get(self, request):
+        """实现退出登录逻辑"""
+        # 清理session
+        logout(request)
+        # 退出登录，重定向到登录页
+        response = JsonResponse({'code': 0,
+                                 'errmsg': 'ok'})
+        # 退出登录时清除cookie中的username
+        response.delete_cookie('username')
+
+        return response
 
 
 class LoginView(View):
@@ -56,9 +72,10 @@ class LoginView(View):
             # 6.如果记住:  设置为两周有效
             request.session.set_expiry(None)
 
+        response = JsonResponse({'code': 0, 'errmsg': '注册成功!'})
         # 8.返回json
-        return JsonResponse({'code': 0,
-                             'errmsg': 'ok'})
+        response.set_cookie('username', user.username, max_age=3600 * 24 * 15)
+        return response
 
 
 # 用户名重复
@@ -122,5 +139,7 @@ class RegisterView(View):
             return http.JsonResponse({'code': 400, 'errmsg': '注册失败!'})
 
         login(request, user)
+        response = JsonResponse({'code': 0, 'errmsg': '注册成功!'})
 
-        return http.JsonResponse({'code': 0, 'errmsg': '注册成功!'})
+        response.set_cookie('username', user.username, max_age=3600 * 24 * 15)
+        return response
